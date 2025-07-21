@@ -1,18 +1,21 @@
-/* --- 기본 및 디자인 설정 --- */
+/* --- 디자인 시스템 (이미지 기반) --- */
 :root {
-    --bg-color: #fdf6f0;
-    --main-color: #fbeee2;
-    --point-color: #e5d4c3;
-    --text-color: #5c5c5c;
-    --income-color: #3b82f6;
-    --expense-color: #ef4444;
-    --today-border: #f59e0b;
-    --shift-day: #a7f3d0;
-    --shift-night: #a5b4fc;
-    --shift-off: #fde68a;
-    --shift-holiday: #fca5a5;
+    --c-bg: #f8f7f4;
+    --c-main: #ffffff;
+    --c-day-bg: #fbf9f6;
+    --c-day-bg-hover: #f5f2ed;
+    --c-text-main: #3d3d3d;
+    --c-text-light: #9e9e9e;
+    --c-border: #edeae4;
+    --c-accent-blue: #5b86e5;
+    --c-accent-red: #f86d70;
+    --c-shift-day: #b0e0a7;   /* 주 */
+    --c-shift-night: #a5b4fc; /* 야 */
+    --c-shift-off: #fde68a;   /* 비 */
+    --c-shift-holiday: #fca5a5;/* 휴 */
 }
 
+/* --- 기본 설정 --- */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -21,8 +24,8 @@
 }
 
 body {
-    background-color: var(--bg-color);
-    color: var(--text-color);
+    background-color: var(--c-bg);
+    color: var(--c-text-main);
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -32,43 +35,56 @@ body {
 
 .container {
     width: 100%;
-    max-width: 900px;
-    background-color: white;
+    max-width: 1000px;
+    background-color: var(--c-main);
     border-radius: 16px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.05);
     padding: 24px;
 }
 
-/* --- 캘린더 헤더 --- */
+/* --- 캘린더 --- */
+.calendar-wrapper {
+    width: 100%;
+}
+
 .calendar-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    position: relative;
 }
 
 .calendar-header h1 {
     font-size: 24px;
     font-weight: bold;
+    margin: 0 20px;
 }
 
 .nav-btn {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 24px;
-    color: var(--point-color);
+    font-size: 18px;
+    color: var(--c-text-light);
     transition: color 0.2s;
+    position: absolute;
 }
 .nav-btn:hover {
-    color: var(--text-color);
+    color: var(--c-text-main);
 }
+#prev-month-btn { left: 0; }
+#next-month-btn { right: 0; }
 
-/* --- 캘린더 본문 --- */
+
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
+    gap: 8px;
+}
+
+.day-headers {
+    margin-bottom: 8px;
 }
 
 .day-header {
@@ -76,123 +92,167 @@ body {
     font-weight: bold;
     padding-bottom: 8px;
     font-size: 14px;
+    color: var(--c-text-light);
 }
-
-.day-header:first-child { color: var(--expense-color); }
-.day-header:last-child { color: var(--income-color); }
+.day-header.sunday { color: var(--c-accent-red); }
+.day-header.saturday { color: var(--c-accent-blue); }
 
 .date-cell {
-    position: relative;
-    background-color: var(--main-color);
-    border-radius: 8px;
-    padding: 8px;
-    aspect-ratio: 1 / 1;
+    background-color: var(--c-day-bg);
+    border-radius: 12px;
+    padding: 10px;
+    aspect-ratio: 1 / 1.1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     cursor: pointer;
     transition: background-color 0.2s;
+    border: 1px solid var(--c-border);
+    position: relative;
     overflow: hidden;
 }
 
 .date-cell:hover {
-    background-color: var(--point-color);
+    background-color: var(--c-day-bg-hover);
 }
 
 .date-cell.not-current-month {
     background-color: transparent;
-    color: #ccc;
-    cursor: default;
-}
-
-.date-cell.not-current-month:hover {
-    background-color: transparent;
+    border-color: transparent;
+    pointer-events: none;
 }
 
 .date-cell.today {
-    border: 2px solid var(--today-border);
+    border: 2px solid var(--c-accent-blue);
 }
 
 .date-cell.selected {
-    background-color: var(--point-color);
-    border: 2px solid var(--text-color);
+    background-color: var(--c-day-bg-hover);
+    border: 2px solid var(--c-text-main);
+}
+
+.cell-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
 }
 
 .date-number {
     font-weight: bold;
     font-size: 14px;
-    align-self: flex-start;
 }
+.sunday .date-number { color: var(--c-accent-red); }
+.saturday .date-number { color: var(--c-accent-blue); }
 
 .shift-tag {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    font-size: 12px;
+    font-size: 11px;
     padding: 2px 6px;
-    border-radius: 4px;
+    border-radius: 10px;
     font-weight: bold;
 }
-.shift-주 { background-color: var(--shift-day); }
-.shift-야 { background-color: var(--shift-night); color: white; }
-.shift-비 { background-color: var(--shift-off); }
-.shift-휴 { background-color: var(--shift-holiday); }
+.shift-주 { background-color: var(--c-shift-day); }
+.shift-야 { background-color: var(--c-shift-night); color: white; }
+.shift-비 { background-color: var(--c-shift-off); }
+.shift-휴 { background-color: var(--c-shift-holiday); }
+
+.cell-content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 11px;
+    overflow: hidden;
+}
 
 .totals {
-    font-size: 11px;
-    text-align: right;
     line-height: 1.4;
 }
-.total-income { color: var(--income-color); }
-.total-expense { color: var(--expense-color); }
+.total-income { color: var(--c-accent-blue); font-weight: bold; }
+.total-expense { color: var(--c-accent-red); font-weight: bold; }
+
+.schedule-preview-list {
+    list-style-type: none;
+    line-height: 1.4;
+}
+.schedule-preview-list li {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--c-text-light);
+}
+.schedule-preview-list li::before {
+    content: '•';
+    margin-right: 4px;
+}
+
 
 /* --- 상세 내역 --- */
-.details-section {
-    margin-top: 24px;
+.details-wrapper {
+    margin-top: 32px;
     padding-top: 24px;
-    border-top: 1px solid var(--main-color);
+    border-top: 1px solid var(--c-border);
 }
 
 .details-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 24px;
 }
 
 .details-header h2 {
     font-size: 20px;
+    font-weight: bold;
+}
+
+.details-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.details-block {
+    display: flex;
+    flex-direction: column;
+}
+
+.details-subheader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.details-subheader h3 {
+    font-size: 16px;
 }
 
 .add-btn {
-    background-color: var(--point-color);
-    border: none;
+    background-color: var(--c-day-bg);
+    border: 1px solid var(--c-border);
     border-radius: 8px;
-    padding: 8px 16px;
+    padding: 6px 12px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 12px;
     font-weight: bold;
     transition: background-color 0.2s;
 }
 .add-btn:hover {
-    background-color: #d8c3b1;
+    background-color: var(--c-day-bg-hover);
 }
 
-.transaction-list ul {
+#transaction-list ul, #schedule-list ul {
     list-style-type: none;
-    max-height: 200px;
+    max-height: 150px;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
-
-.transaction-list li {
+#transaction-list li, #schedule-list li {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid var(--main-color);
-}
-.transaction-list li:last-child {
-    border-bottom: none;
+    padding: 8px;
+    border-radius: 6px;
+    background-color: var(--c-day-bg);
+    font-size: 14px;
 }
 
 .item-details {
@@ -206,15 +266,10 @@ body {
     padding: 2px 8px;
     border-radius: 4px;
     font-size: 12px;
-}
-.item-type.income {
-    background-color: var(--income-color);
     color: white;
 }
-.item-type.expense {
-    background-color: var(--expense-color);
-    color: white;
-}
+.item-type.income { background-color: var(--c-accent-blue); }
+.item-type.expense { background-color: var(--c-accent-red); }
 
 .delete-btn {
     background-color: #ddd;
@@ -227,8 +282,10 @@ body {
     color: white;
     line-height: 20px;
     text-align: center;
+    transition: background-color 0.2s;
 }
-.delete-btn:hover { background-color: var(--expense-color); }
+.delete-btn:hover { background-color: var(--c-accent-red); }
+
 
 /* --- 모달 (팝업창) --- */
 .modal-overlay {
@@ -237,10 +294,11 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    display: none; /* JS로 제어 */
+    background-color: rgba(0,0,0,0.4);
+    display: none;
     justify-content: center;
     align-items: center;
+    z-index: 1000;
 }
 
 .modal-content {
@@ -264,48 +322,29 @@ body {
     flex-direction: column;
     gap: 8px;
 }
-
-.form-group label {
-    font-weight: bold;
-}
-
+.form-group label { font-weight: bold; }
 .form-group input[type="text"], .form-group input[type="number"] {
-    border: 1px solid #ccc;
+    border: 1px solid var(--c-border);
     border-radius: 8px;
     padding: 10px;
     font-size: 16px;
 }
-
-.type-selector {
-    display: flex;
-    gap: 10px;
-}
-
+.type-selector { display: flex; gap: 10px; }
 .type-selector label {
     flex: 1;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--c-border);
     border-radius: 8px;
     text-align: center;
     cursor: pointer;
 }
-
-.type-selector input[type="radio"] {
-    display: none;
-}
-
+.type-selector input[type="radio"] { display: none; }
 .type-selector input[type="radio"]:checked + label {
-    border-color: var(--text-color);
-    background-color: var(--main-color);
+    border-color: var(--c-text-main);
+    background-color: var(--c-day-bg);
     font-weight: bold;
 }
-
-.modal-actions {
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-}
-
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
 .modal-btn {
     padding: 10px 20px;
     border-radius: 8px;
@@ -313,9 +352,5 @@ body {
     font-weight: bold;
     cursor: pointer;
 }
-.modal-btn.save {
-    background-color: var(--point-color);
-}
-.modal-btn.cancel {
-    background-color: #eee;
-}
+.modal-btn.save { background-color: var(--c-accent-blue); color: white; }
+.modal-btn.cancel { background-color: #eee; }
